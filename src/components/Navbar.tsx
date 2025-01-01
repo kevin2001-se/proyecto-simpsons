@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CgClose } from "react-icons/cg";
 import { FaBars } from "react-icons/fa";
+import { Link, NavLink } from "react-router";
 
 export default function Navbar() {
 
@@ -16,7 +17,7 @@ export default function Navbar() {
                         </button>
                     </div>
                     <div className="w-32 md:w-40 lg:w-48 max-md:order-1">
-                        <img className="w-full" src="img/the-simpsoms.png" alt="" />
+                        <Link to="/"><img className="w-full" src="/img/the-simpsoms.png" alt="" /></Link>
                     </div>
                     <div className="hidden md:block"></div>
                 </div>
@@ -31,9 +32,24 @@ export default function Navbar() {
 
                 <div className="h-[70%] flex items-center">
                     <ul className="w-full text-5xl font-bold flex flex-col items-center gap-6 text-center">
-                        <li><a href="" className="text-black">INICIO</a></li>
-                        <li><a href="" className="text-stroke-sm text-white">FAVORITOS</a></li>
-                        <li><a href="" className="text-stroke-sm text-white">INICIAR SESION</a></li>
+                        <li>
+                            <NavLink to={'/'} 
+                                className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
+                                INICIO
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to={'/favorite'} 
+                                className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
+                                FAVORITOS
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to={'/login'} 
+                                className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
+                                INICIAR SESION
+                            </NavLink>
+                        </li>
                     </ul>
                 </div>
             </div>
