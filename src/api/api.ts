@@ -1,4 +1,4 @@
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import api from "../helper/api";
 import { DataFavorite, LoginType, RegisterType } from "../types";
 import { AuthUserSchema, UserSchema } from "../utils/data-schemas";
@@ -7,7 +7,7 @@ import { AuthUserSchema, UserSchema } from "../utils/data-schemas";
 export const getCsrfToken = async () => {
     try {
         // Solicita el token CSRF a Laravel
-        await api.get('/sanctum/csrf-cookie');
+        await axios.get(import.meta.env.VITE_API_URL+'/sanctum/csrf-cookie');
         console.log("CSRF token obtenido exitosamente.");
     } catch (error) {
         console.error("Error al obtener el CSRF token:", error);
