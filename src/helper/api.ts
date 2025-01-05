@@ -10,6 +10,7 @@ const api = axios.create({
     withCredentials: true,
 });
 
+api.defaults.withXSRFToken = true;
 
 // Función para agregar el token antes de cada solicitud
 api.interceptors.request.use(config => {
@@ -19,6 +20,7 @@ api.interceptors.request.use(config => {
     if (csrfToken) {
         // Si existe el token CSRF, agregarlo a las cabeceras de la solicitud
         config.headers['X-CSRF-TOKEN'] = csrfToken;
+        console.log(csrfToken)
     }
 
     // Obtener el token de autenticación de localStorage y agregarlo a las cabeceras
