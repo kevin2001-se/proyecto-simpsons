@@ -3,6 +3,17 @@ import api from "../helper/api";
 import { DataFavorite, LoginType, RegisterType } from "../types";
 import { AuthUserSchema, UserSchema } from "../utils/data-schemas";
 
+// Función para obtener el token CSRF
+export const getCsrfToken = async () => {
+    try {
+        // Solicita el token CSRF a Laravel
+        await api.get('/sanctum/csrf-cookie');
+        console.log("CSRF token obtenido exitosamente.");
+    } catch (error) {
+        console.error("Error al obtener el CSRF token:", error);
+    }
+};
+
 export const login = async (formData: LoginType) => {
     try {
         
