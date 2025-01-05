@@ -16,6 +16,7 @@ export const getCsrfToken = async () => {
 
 export const login = async (formData: LoginType) => {
     try {
+        await getCsrfToken();
         
         const { data } = await api.post('/login', formData);
 
