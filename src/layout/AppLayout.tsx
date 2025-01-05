@@ -1,5 +1,6 @@
 import { Outlet } from "react-router";
 import Navbar from "../components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 export default function AppLayout() {
   return (
@@ -7,6 +8,7 @@ export default function AppLayout() {
         <Navbar />
 
         <Outlet />
+        <Toaster position="top-center" />
     </div>
   )
 }

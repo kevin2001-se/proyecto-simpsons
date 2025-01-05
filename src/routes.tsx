@@ -9,6 +9,7 @@ import AuthLayout from "./components/AuthLayout";
 import NotFound from "./pages/error/NotFound";
 import Search from "./pages/Search";
 import Register from "./pages/Register";
+import AllPersonajes from "./pages/AllPersonajes";
 
 export default function Router() {
   return (
@@ -18,6 +19,7 @@ export default function Router() {
             <Route element={<AppLayout />}>
                 <Route path="/" element={<App />} />
                 <Route path="/search" element={<Search />} />
+                <Route path="/allPersonajes" element={<AllPersonajes />} />
                 <Route element={<AuthLayout />}>
                   <Route path="/favorite" element={<Favorite />} />
                 </Route>

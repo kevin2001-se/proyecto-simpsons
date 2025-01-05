@@ -8,10 +8,15 @@ const api = axios.create({
     }
 });
 
-// Configurar token en el encabezado
-const token = localStorage.getItem('authToken');
-if (token) {
-    api.defaults.headers.Authorization = `Bearer ${token}`;
-}
+// Función para agregar el token antes de cada solicitud
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, error => {
+    return Promise.reject(error);
+});
 
 export default api;

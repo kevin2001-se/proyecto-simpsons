@@ -1,11 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CgClose } from "react-icons/cg";
 import { FaBars } from "react-icons/fa";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
+import { useAppStore } from "../store";
 
 export default function Navbar() {
 
+    const navigate = useNavigate();
+
+    const getUser = useAppStore((state) => state.getUser)
+    const getTokenAuth = useAppStore((state) => state.getTokenAuth)
+    const user = useAppStore((state) => state.user)
+    const cerrarSesion = useAppStore((state) => state.cerrarSesion)
+    const getFavoritos = useAppStore((state) => state.getFavoritos)
+
+    useEffect(() => {
+      setTimeout(async () => {
+        if (!user && getTokenAuth) {
+            await getUser();
+            await getFavoritos();
+        }
+      });
+    }, [,getTokenAuth])
+
     const [openMenu, setOpenMenu] = useState(false)
+
+    const handleCerrarSesion = () => {
+        cerrarSesion();
+        navigate('/login')
+    }
 
     return (
         <>
@@ -28,7 +51,9 @@ export default function Navbar() {
                     <CgClose className="text-3xl" />
                 </button>
 
-                <h1 className="text-5xl font-bold text-center">MENÚ</h1>
+                <h1 className="text-5xl font-bold text-center">{
+                    user ? `Hola, ${user.name}` : "MENÚ"    
+                }</h1>
 
                 <div className="h-[70%] flex items-center">
                     <ul className="w-full text-5xl font-bold flex flex-col items-center gap-6 text-center">
@@ -39,17 +64,31 @@ export default function Navbar() {
                             </NavLink>
                         </li>
                         <li>
+                            <NavLink to={'/allPersonajes'} 
+                                className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
+                                PERSONAJES
+                            </NavLink>
+                        </li>
+                        <li>
                             <NavLink to={'/favorite'} 
                                 className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
                                 FAVORITOS
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink to={'/login'} 
-                                className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
-                                INICIAR SESION
-                            </NavLink>
-                        </li>
+                        {
+                            user ? (
+                                <li>
+                                    <button type="button" onClick={handleCerrarSesion} className="text-stroke-sm text-white">CERRAR SESION</button>
+                                </li>
+                            ) : (
+                                <li>
+                                    <NavLink to={'/login'} 
+                                        className={({isActive}) => isActive ? 'text-black' : 'text-stroke-sm text-white' }>
+                                        INICIAR SESION
+                                    </NavLink>
+                                </li>
+                            )
+                        }
                     </ul>
                 </div>
             </div>
