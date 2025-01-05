@@ -8,6 +8,8 @@ const api = axios.create({
     }
 });
 
+axios.defaults.withXSRFToken = true;
+
 // Función para agregar el token antes de cada solicitud
 api.interceptors.request.use(config => {
     const token = localStorage.getItem('authToken');
