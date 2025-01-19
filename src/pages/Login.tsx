@@ -5,6 +5,7 @@ import ErrorForm from "../components/ErrorForm";
 import { useAppStore } from "../store";
 import { useEffect, useMemo } from "react";
 import { Navigate } from "react-router";
+import toast from "react-hot-toast";
 
 const inialtValues: LoginType = {
   email: "",
@@ -28,7 +29,7 @@ export default function Login() {
 
   useEffect(() => {
     if (errorMessage) {
-      alert(errorMessage)
+      toast.error(errorMessage)
       clearErrorMessage();
     }
   }, [errorMessage])

@@ -14,17 +14,17 @@ export default function Personaje({simpson}: PersonajeProps) {
     const favorites = useAppStore((state) => state.favorites)
 
     useEffect(() => {
-        if (favorites.find(fav => fav === simpson?._id)) {
+        if (favorites.find(fav => fav.idSimpson === simpson?._id)) {
             setIsActive(true);
         } else {
             setIsActive(false);
         }
     }, [favorites])
 
-    return (
+    if(simpson) return (
         <article className="min-h-[460px] shadow-[0px_5px_15px_0px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden">
             <div className="relative h-[210px]">
-                <Start active={isActive ? true : false} id={simpson?._id ?? ""} />
+                <Start active={isActive ? true : false} personaje={simpson} />
                 
                 <img className="absolute mt-3 top-0 left-1/2 -translate-x-1/2 w-44 h-[250px]" src={simpson?.Imagen} alt="" />
             </div>

@@ -1,22 +1,10 @@
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import api from "../helper/api";
 import { DataFavorite, LoginType, RegisterType } from "../types";
 import { AuthUserSchema, UserSchema } from "../utils/data-schemas";
 
-// Función para obtener el token CSRF
-export const getCsrfToken = async () => {
-    try {
-        // Solicita el token CSRF a Laravel
-        await axios.get(import.meta.env.VITE_API_URL+'/sanctum/csrf-cookie');
-        console.log("CSRF token obtenido exitosamente.");
-    } catch (error) {
-        console.error("Error al obtener el CSRF token:", error);
-    }
-};
-
 export const login = async (formData: LoginType) => {
     try {
-        await getCsrfToken();
         
         const { data } = await api.post('/login', formData);
 
@@ -65,10 +53,38 @@ export const postRegisterUser = async (formData: RegisterType) => {
     }
 } 
 
-export const getFavoritos = async (user_id: number) => {
+export const postRecoverPassword = async (formData: { email: string }) => {
     try {
         
-        const { data } = await api.get(`/favorites/${user_id}`);
+        const { data } = await api.post('/recover_password', formData);
+
+        return data.message;
+
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message)
+        }
+    }
+} 
+
+export const postLogout = async () => {
+    try {
+        
+        const { data } = await api.post('/logout');
+
+        return data.message;
+
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.message)
+        }
+    }
+} 
+
+export const getFavoritos = async () => {
+    try {
+        
+        const { data } = await api.get(`/favorites`);
 
         return data;
 
@@ -93,10 +109,10 @@ export const postRegisterFavorite = async (formData: DataFavorite) => {
     }
 } 
 
-export const postDeleteFavorite = async (formData: DataFavorite) => {
+export const postDeleteFavorite = async (idSimpson: string) => {
     try {
         
-        const { data } = await api.post('/favoritesDelete', formData);
+        const { data } = await api.delete('/favorites/'+idSimpson);
 
         return data.message;
 

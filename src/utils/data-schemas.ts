@@ -27,3 +27,9 @@ export const AuthUserSchema = z.object({
     token: z.string().nullable(),
     user: UserSchema.nullable()
 })
+
+// Schema para authenticación
+export const FavoriteSchema = z.object({
+    idSimpson: z.string(),
+    json_simpson: z.string().nullable(),
+})

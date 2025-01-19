@@ -25,8 +25,8 @@ export default function Navbar() {
 
     const [openMenu, setOpenMenu] = useState(false)
 
-    const handleCerrarSesion = () => {
-        cerrarSesion();
+    const handleCerrarSesion = async () => {
+        await cerrarSesion();
         navigate('/login')
     }
 

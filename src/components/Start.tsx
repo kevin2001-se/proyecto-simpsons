@@ -3,7 +3,7 @@ import { useAppStore } from "../store";
 import { TheSimpson } from "../types";
 import toast from "react-hot-toast";
 
-export default function Start({active = false, id} : {active?: boolean, id: TheSimpson['_id']}) {
+export default function Start({active = false, personaje} : {active?: boolean, personaje: TheSimpson}) {
 
   const [colorActive, setcolorActive] = useState('#ffffff')
   const [activeIco, setActiveIco] = useState(active)
@@ -31,10 +31,10 @@ export default function Start({active = false, id} : {active?: boolean, id: TheS
     getUser();
     if (getTokenAuth && user) {
       if (activeIco === true) {
-        deleteFavorites(id);
+        deleteFavorites(personaje);
         setActiveIco(false);
       } else {
-        addFavorites(id);
+        addFavorites(personaje);
         setActiveIco(true);
       }
     } else {

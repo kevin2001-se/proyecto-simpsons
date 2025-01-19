@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { DataFavorite, LoginType, RegisterType, TheSimpson, User } from "./types";
+import { DataFavorite, Favorite, LoginType, RegisterType, TheSimpson, User } from "./types";
 import { getAllPersonajes, getAllPersonajesFavorite, getPersonajeByName, getSimpsonsPrincipal } from "./api/api-simpson";
-import { getUserAuth, login, postDeleteFavorite, postRegisterFavorite, postRegisterUser, getFavoritos } from './api/api';
+import { getUserAuth, login, postDeleteFavorite, postRegisterFavorite, postRegisterUser, getFavoritos, postLogout, postRecoverPassword } from './api/api';
 import toast from "react-hot-toast";
 
 export type SimsonpsStoreType = {
@@ -18,13 +18,14 @@ export type SimsonpsStoreType = {
     getTokenAuth: string,
     registerUser: (formData: RegisterType) => Promise<void>,
     cerrarSesion: () => void,
+    recover_password: (formData: { email: string }) => void,
     page: number,
     hasMore: boolean,
     allPersonaje: TheSimpson[],
     getAllPersonajes: (page: number) => void,
-    favorites: TheSimpson['_id'][],
-    addFavorites: (id: TheSimpson['_id']) => void,
-    deleteFavorites: (id: TheSimpson['_id']) => void,
+    favorites: Favorite[],
+    addFavorites: (personaje: TheSimpson) => void,
+    deleteFavorites: (personaje: TheSimpson) => void,
     getFavoritos: () => void,
     getAllFavorites: () => void,
     AllFavorites: TheSimpson[]
@@ -69,7 +70,6 @@ export const useAppStore = create<SimsonpsStoreType>()(devtools(
                     set({
                         errorMessage: error.message 
                     })
-                    toast.error("Ocurrio un error inesperado")
                 }
             }
         },
@@ -98,13 +98,23 @@ export const useAppStore = create<SimsonpsStoreType>()(devtools(
                 toast.error("Ocurrio un error inesperado")
             }
         },
-        cerrarSesion: () => {
+        cerrarSesion: async () => {
+            await postLogout();
             localStorage.removeItem('authToken')
             set({
                 user: null,
                 getTokenAuth: "",
                 favorites: []
             })
+        },
+        recover_password: async (formData: { email: string }) => {
+            try {
+                await postRecoverPassword(formData);
+                toast.success("Se envio la contraseña a su correo.")
+            } catch (error) {
+                console.log(error)
+                toast.error("Ocurrio un error inesperado")
+            }
         },
         getAllPersonajes: async (page: number) => {
             const allPersonajes = await getAllPersonajes(page);
@@ -123,11 +133,18 @@ export const useAppStore = create<SimsonpsStoreType>()(devtools(
             }
         },
         favorites: [],
-        addFavorites: async (id: string) => {
+        addFavorites: async (personaje: TheSimpson) => {
 
             const formData: DataFavorite = {
                 user_id: get().user?.id ?? 0,
-                idSimpson: id
+                idSimpson: personaje._id,
+                json_simpson: JSON.stringify(personaje)
+                
+            }
+
+            const favorite: Favorite = {
+                idSimpson: personaje._id,
+                json_simpson: JSON.stringify(personaje)
             }
 
             const response = await postRegisterFavorite(formData);
@@ -136,25 +153,20 @@ export const useAppStore = create<SimsonpsStoreType>()(devtools(
                 toast.success(response)
     
                 set({
-                    favorites: [...get().favorites, id]
+                    favorites: [...get().favorites, favorite]
                 })
             } else {
                 toast.error('Ocurrio un error inesperado')
             }
         },
-        deleteFavorites: async (id: string) => {
+        deleteFavorites: async (personaje: TheSimpson) => {
 
-            const formData: DataFavorite = {
-                user_id: get().user?.id ?? 0,
-                idSimpson: id
-            }
-
-            const response = await postDeleteFavorite(formData);
+            const response = await postDeleteFavorite(personaje._id);
 
             if (response) {
                 toast.success(response)
 
-                const favorites = get().favorites.filter(fav => fav !== id);
+                const favorites = get().favorites.filter(fav => fav.idSimpson !== personaje._id);
                 set({
                     favorites: favorites
                 })
@@ -164,7 +176,7 @@ export const useAppStore = create<SimsonpsStoreType>()(devtools(
         },
         getFavoritos: async () => {
 
-            const response = await getFavoritos(get().user?.id ?? 0);
+            const response = await getFavoritos();
 
             if (response) {
                 set({
@@ -174,15 +186,14 @@ export const useAppStore = create<SimsonpsStoreType>()(devtools(
         },
         AllFavorites: [],
         getAllFavorites: async () => {
-            const response = await getAllPersonajesFavorite();
-            const dataMap = response?.map(res => {
-                if (get().favorites.includes(res._id)) {
-                    return res;
-                }
-            }).filter(res => res !== undefined)
-            if (response && dataMap) {
+            if (get().favorites) {
+
+                const favorites = get().favorites.map((favorite) => {
+                    return JSON.parse(favorite.json_simpson!)
+                })
+
                 set({
-                    AllFavorites: dataMap as TheSimpson[]
+                    AllFavorites: favorites as TheSimpson[]
                 })
             }
         }
