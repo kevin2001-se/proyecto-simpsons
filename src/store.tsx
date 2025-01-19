@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { DataFavorite, Favorite, LoginType, RegisterType, TheSimpson, User } from "./types";
-import { getAllPersonajes, getAllPersonajesFavorite, getPersonajeByName, getSimpsonsPrincipal } from "./api/api-simpson";
+import { getAllPersonajes, getPersonajeByName, getSimpsonsPrincipal } from "./api/api-simpson";
 import { getUserAuth, login, postDeleteFavorite, postRegisterFavorite, postRegisterUser, getFavoritos, postLogout, postRecoverPassword } from './api/api';
 import toast from "react-hot-toast";
 
